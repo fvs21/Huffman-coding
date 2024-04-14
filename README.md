@@ -1,2 +1,9 @@
 # Huffman-coding
-Huffman compression algorithm in C++
+Huffman text compression algorithm in C++
+
+### Usage
+
+...
+g++ compression.cc -o main
+./main filename.txt
+...
