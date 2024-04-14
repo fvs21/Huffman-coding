@@ -20,6 +20,8 @@ struct compare {
     }
 };
 
+unsigned sizeOfTree = 0;
+
 TreeNode* newNode(char data, unsigned int frequency, TreeNode* left, TreeNode* right) {
     TreeNode* node = new TreeNode();
     node->data = data;
@@ -34,8 +36,11 @@ void encode(TreeNode* node, std::string code, std::unordered_map<char, std::stri
     if(node == nullptr)
         return;
 
-    if(node->left == nullptr && node->right == nullptr) 
+    if(node->left == nullptr && node->right == nullptr) {
         huffmanCodes[node->data] = code;
+        sizeOfTree += sizeof(node) * 8;
+        return;
+    }
 
     encode(node->left, code + '0', huffmanCodes);
     encode(node->right, code + '1', huffmanCodes);
@@ -129,11 +134,14 @@ int main(int argc, char** argv) {
     while(index < (int) encoded.size() - 2) {
         decode(root, index, encoded);
     }
+
+    unsigned compressedFileSize = encoded.size() + (sizeof(encoded) + sizeof(huffmanCodes)*8) + sizeOfTree;
+
     std::cout << "\n\nOriginal file size: " << fileSize << '\n';
-    std::cout << "Compressed file size: " << encoded.size() + (sizeof(huffmanCodes)) * 8 << '\n';
+    std::cout << "Compressed file size: " << compressedFileSize << '\n';
+    std::cout << ((float) compressedFileSize / (float) fileSize) * 100 << "%\n";
 
     file.close();
-
     freeMemory(root);
 
     return 0;
